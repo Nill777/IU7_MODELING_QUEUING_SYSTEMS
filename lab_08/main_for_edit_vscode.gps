@@ -1,0 +1,63 @@
+Operator_1 EQU 1
+Operator_2 EQU 2
+Operator_3 EQU 3
+PC_1       EQU 4
+PC_2       EQU 5
+
+; функция среднего времени работы оператора
+; аргумент P1 (Operator_ID), тип D3 (дискретная, 3 варианта)
+OP_TIME FUNCTION P1,D3
+Operator_1,20/Operator_2,40/Operator_3,40
+
+; функция разброса времени оператора
+OP_DEV FUNCTION P1,D3
+Operator_1,5/Operator_2,10/Operator_3,20
+
+; функция определения номера компьютера по оператору
+; аргумент P1 (Operator_ID), результат PC_ID (4 или 5)
+COMP_ID FUNCTION P1,D3
+Operator_1,PC_1/Operator_2,PC_1/Operator_3,PC_2
+
+; функция среднего времени работы PC
+; аргумент P2 (PC_ID), тип D2 (дискретная, 2 варианта)
+COMP_TIME FUNCTION P2,D2
+PC_1,15/PC_2,30
+
+GENERATE 10,2
+
+; SELECT <Режим> <Параметр_для_записи>,<От>,<До>,,,<Метка_если_никто_не_найден>
+; ищем свободного (Not in Use) среди 1-3, номер найденного кладем в параметр P1
+; если все заняты, то переход на метку FAIL
+SELECT NU 1,Operator_1,Operator_3,,,FAIL
+
+; Обслуживание оператором
+; номер которого лежит в P1
+SEIZE   P1                   ; занять оператора (1 или 2 или 3)
+ASSIGN  4,FN$OP_DEV          ; разброс пишем в P4
+; ! важно P4 иначе как множитель
+ADVANCE FN$OP_TIME,P4        ; вызываем функцию, время вычисляется по P1
+RELEASE P1                   ; освободить оператора
+
+; функция COMP_ID по P1 (Operator_ID) возвращает PC_ID
+ASSIGN  2,FN$COMP_ID         ; результат пишем в P2
+
+; функция COMP_TIME по P2 (PC_ID) возвращает время работы PC
+ASSIGN  3,FN$COMP_TIME       ; результат пишем в P3
+
+; Обслуживание компьютером
+QUEUE   P2  ; встать в очередь (PC_1 или PC_2)
+SEIZE   P2  ; занять компьютер (PC_1 или PC_2)
+DEPART  P2  ; покинуть очередь
+ADVANCE P3  ; работать сколько записано в P3
+RELEASE P2  ; освободить компьютер
+
+SAVEVALUE SERVED+,1     ; +1 к счетчику обслуженных
+SAVEVALUE TOTAL_REQ+,1  ; +1 к общему числу заявок
+TERMINATE 1             ; удалить транзакт, уменьшить счетчик START на 1
+
+; попадаем только из SELECT, если операторы
+FAIL    SAVEVALUE REJECTS+,1    ; +1 к счетчику отказов
+        SAVEVALUE TOTAL_REQ+,1
+        TERMINATE 1
+
+START 300

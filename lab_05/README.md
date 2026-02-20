@@ -1,27 +1,23 @@
-This is a Kotlin Multiplatform project targeting Desktop (JVM).
+# Лабораторная работа №5
+## Задание 
+Разработать  программное  обеспечение  для  моделирования  работы 
+системы  массового  обслуживания. В информационный  центр  приходят 
+клиенты через интервалы времени 10±2 минуты; если все три имеющихся 
+оператора заняты, клиенту отказывают в обслуживании.  
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Операторы имеют разную производительность и могут обеспечивать 
+обслуживание запроса пользователя за 20±5, 40±10, 40±20 минут.  Клиенты 
+стремятся  занять  свободного  оператора  с  максимальной 
+производительностью. Полученные  запросы  попадают  в  приемный 
+накопитель, откуда они выбираются на обработку. 
 
-### Build and Run Desktop (JVM) Application
+На первый компьютер поступают запросы от 1-ого и 2-ого операторов, 
+на  второй  – от  3-его;  время  обработки  запросов  на  первом  и  втором 
+компьютерах  равно,  соответственно,  15  и  30  минутам. За  единицу 
+имитационного времени принять 0.01 минуты. 
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+Промоделировать  процесс  обработки  300  запросов.  Определить 
+вероятность отказа. Построить структурную схему модели, а также схему 
+модели в терминах систем массового обслуживания.
 
----
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+![скрин](./report/image.png)

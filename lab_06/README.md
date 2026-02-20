@@ -1,27 +1,39 @@
-This is a Kotlin Multiplatform project targeting Desktop (JVM).
+# Лабораторная работа №6
+## Задание 
+Разработать  программное  обеспечение  для  моделирования  работы 
+системы массового обслуживания зоны досмотра аэропорта. 
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+В  зону  досмотра  прибывают  пассажиры.  Интервал  времени  между 
+приходами заявок задается равномерным распределением.  При генерации 
+заявки определяется её тип, который задается равномерным распределением 
+по весам: 
+- Граждане РФ; 
+- Иностранные граждане; 
+- Семьи с детьми. 
 
-### Build and Run Desktop (JVM) Application
+### Фаза 1: Паспортный контроль
+Пассажиры распределяются в три независимые очереди в зависимости 
+от типа заявки: 
+- Очередь 1 (Граждане РФ) обслуживается 2-мя офицерами; 
+- Очередь 2 (Иностранцы) обслуживается 1-им офицером; 
+- Очередь 3 (Семьи) обслуживается 1-им офицером. 
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
+Время  обслуживания  распределено  равномерно,  но  имеет  разные 
+диапазоны для каждой категории. Для семей время обслуживания задается на 
+всю группу сразу. 
 
----
+Возможен отказ в обслуживании (проблемы с документами) с заданной 
+вероятностью. Если отказ получает семья, то вся группа покидает систему. 
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### Фаза 2: Досмотр
+Пассажиры, успешно прошедшие паспортный контроль, попадают в 
+общую  очередь перед  зоной  досмотра. Работают  3  сканера.  Время 
+сканирования рассчитывается индивидуально для каждого человека(задается 
+равномерным распределением). Для групповой заявки (семьи) время занятия 
+сканера равно сумме времен сканирования всех членов группы. 
+
+Возможен  отказ  (обнаружение  запрещенных  предметов)  с  заданной 
+вероятностью. В случае обнаружения предмета у одного члена семьи, отказ 
+получает вся группа. 
+
+![скрин](./report/image.png)
